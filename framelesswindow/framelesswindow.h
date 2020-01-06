@@ -27,6 +27,8 @@ class FramelessWindow : public QWidget {
   explicit FramelessWindow(QWidget *parent = Q_NULLPTR);
   virtual ~FramelessWindow();
   void setContent(QWidget *w);
+  void setManualResize(bool resizable);
+  void setShowMaximizeButton(bool visibility);
 
  private:
   bool leftBorderHit(const QPoint &pos);
@@ -59,6 +61,7 @@ class FramelessWindow : public QWidget {
   Ui::FramelessWindow *ui;
   QRect m_StartGeometry;
   const quint8 CONST_DRAG_BORDER_SIZE = 15;
+  bool manuallyResizable;
   bool m_bMousePressed;
   bool m_bDragTop;
   bool m_bDragLeft;

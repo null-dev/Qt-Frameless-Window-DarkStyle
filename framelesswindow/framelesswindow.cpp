@@ -26,7 +26,8 @@ FramelessWindow::FramelessWindow(QWidget *parent)
       m_bDragTop(false),
       m_bDragLeft(false),
       m_bDragRight(false),
-      m_bDragBottom(false) {
+      m_bDragBottom(false),
+	 manuallyResizable{true} {
   setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
   // append minimize button flag in case of windows,
   // for correct windows native handling of minimize function
@@ -210,7 +211,7 @@ void FramelessWindow::mouseDoubleClickEvent(QMouseEvent *event) {
 }
 
 void FramelessWindow::checkBorderDragging(QMouseEvent *event) {
-  if (isMaximized()) {
+  if (isMaximized() || !manuallyResizable) {
     return;
   }
 
@@ -371,7 +372,7 @@ bool FramelessWindow::bottomBorderHit(const QPoint &pos) {
 }
 
 void FramelessWindow::mousePressEvent(QMouseEvent *event) {
-  if (isMaximized()) {
+  if (isMaximized() || !manuallyResizable) {
     return;
   }
 
@@ -411,7 +412,7 @@ void FramelessWindow::mousePressEvent(QMouseEvent *event) {
 
 void FramelessWindow::mouseReleaseEvent(QMouseEvent *event) {
   Q_UNUSED(event);
-  if (isMaximized()) {
+  if (isMaximized() || !manuallyResizable) {
     return;
   }
 
@@ -428,7 +429,7 @@ void FramelessWindow::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 bool FramelessWindow::eventFilter(QObject *obj, QEvent *event) {
-  if (isMaximized()) {
+  if (isMaximized() || !manuallyResizable) {
     return QWidget::eventFilter(obj, event);
   }
 
@@ -455,4 +456,12 @@ bool FramelessWindow::eventFilter(QObject *obj, QEvent *event) {
   }
 
   return QWidget::eventFilter(obj, event);
+}
+
+void FramelessWindow::setManualResize(bool resizable) {
+	manuallyResizable = resizable;
+}
+
+void FramelessWindow::setShowMaximizeButton(bool visibility) {
+	ui->maximizeButton->setVisible(visibility);
 }
