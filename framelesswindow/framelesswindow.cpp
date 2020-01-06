@@ -27,7 +27,8 @@ FramelessWindow::FramelessWindow(QWidget *parent)
       m_bDragLeft(false),
       m_bDragRight(false),
       m_bDragBottom(false),
-	 manuallyResizable{true} {
+	 manuallyResizable{true},
+	showMaximizeButton{true} {
   setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
   // append minimize button flag in case of windows,
   // for correct windows native handling of minimize function
@@ -86,13 +87,17 @@ void FramelessWindow::on_maximizeButton_clicked() {
 void FramelessWindow::changeEvent(QEvent *event) {
   if (event->type() == QEvent::WindowStateChange) {
     if (windowState().testFlag(Qt::WindowNoState)) {
-      ui->restoreButton->setVisible(false);
-      ui->maximizeButton->setVisible(true);
+		if (showMaximizeButton) {
+			ui->restoreButton->setVisible(false);
+			ui->maximizeButton->setVisible(true);
+		}
       styleWindow(true, true);
       event->ignore();
     } else if (windowState().testFlag(Qt::WindowMaximized)) {
-      ui->restoreButton->setVisible(true);
-      ui->maximizeButton->setVisible(false);
+		if (showMaximizeButton) {
+			ui->restoreButton->setVisible(true);
+			ui->maximizeButton->setVisible(false);
+		}
       styleWindow(true, false);
       event->ignore();
     }
@@ -199,11 +204,14 @@ void FramelessWindow::on_minimizeButton_clicked() {
 void FramelessWindow::on_closeButton_clicked() { close(); }
 
 void FramelessWindow::on_windowTitlebar_doubleClicked() {
-  if (windowState().testFlag(Qt::WindowNoState)) {
-    on_maximizeButton_clicked();
-  } else if (windowState().testFlag(Qt::WindowFullScreen)) {
-    on_restoreButton_clicked();
-  }
+	if (showMaximizeButton) {
+		if (windowState().testFlag(Qt::WindowNoState)) {
+			on_maximizeButton_clicked();
+		}
+		else if (windowState().testFlag(Qt::WindowFullScreen)) {
+			on_restoreButton_clicked();
+		}
+	}
 }
 
 void FramelessWindow::mouseDoubleClickEvent(QMouseEvent *event) {
@@ -464,4 +472,6 @@ void FramelessWindow::setManualResize(bool resizable) {
 
 void FramelessWindow::setShowMaximizeButton(bool visibility) {
 	ui->maximizeButton->setVisible(visibility);
+	ui->restoreButton->setVisible(visibility);
+	showMaximizeButton = visibility;
 }

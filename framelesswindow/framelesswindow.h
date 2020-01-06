@@ -62,6 +62,7 @@ class FramelessWindow : public QWidget {
   QRect m_StartGeometry;
   const quint8 CONST_DRAG_BORDER_SIZE = 15;
   bool manuallyResizable;
+  bool showMaximizeButton;
   bool m_bMousePressed;
   bool m_bDragTop;
   bool m_bDragLeft;
